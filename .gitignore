@@ -1,0 +1,10 @@
+#忽略所有ini檔
+*.ini
+#忽略Database
+Databases/
+#忽略feedback資料夾
+feedback/
+#忽略python cache
+Package/__pycache__/
+#忽略png
+*.png
