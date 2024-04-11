@@ -10,14 +10,14 @@ Here is a simple script to implement RAG with Azure OpenAI Resource
 
 1. The chatbox has two modes, first mode is the chat generation which use RAG to interact with users:  
   
-![image](https://github.com/ChengWeiGu/Multi-Database_Retrieval_Augmented_Generation/blob/main/chat_gen.png)    
+![image](https://github.com/ChengWeiGu/MultiDatabase-Retrieval-Augmented-Generation/blob/main/chat_gen.png)    
   
 2. For second mode, user can use dalle3 to do image generation:  
   
-![image](https://github.com/ChengWeiGu/Multi-Database_Retrieval_Augmented_Generation/blob/main/img_gen.png)  
+![image](https://github.com/ChengWeiGu/MultiDatabase-Retrieval-Augmented-Generation/blob/main/img_gen.png)  
 
 ## Settings  
-1. Please set the `config.ini` before running the App.py  
+1. Please set the `config.ini` before running the `App.py`  
 2. Description of `config.ini`:  
 
 | Setting  | Description |
