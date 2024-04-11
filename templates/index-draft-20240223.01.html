@@ -1,0 +1,143 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <script>
+        // Function to create the dialog
+        const toggleButton = document.createElement('div');
+        toggleButton.classList.add('fixed', 'bottom-0', 'right-0', 'mb-4', 'mr-4');
+        toggleButton.innerHTML = `
+    <button id="open-chat" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Weintek SR Copilot
+    </button>
+    `;
+        document.body.appendChild(toggleButton);
+        console.log(toggleButton);
+
+        const chatContainer = document.createElement('div');
+        chatContainer.classList.add('hidden', 'fixed', 'bottom-16', 'right-4', 'w-96');
+        chatContainer.id = 'chat-container';
+        chatContainer.innerHTML = `
+    <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+      <div class="p-3 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
+        <p class="text-md font-semibold">Weintek SR Copilot</p>
+        <button id="close-chat" class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+        <!-- Chat messages will be displayed here -->
+        <div class="mb-2 text-right">
+          <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
+        </div>
+        <div class="mb-2">
+          <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
+            chatbot.</p>
+        </div>
+      </div>
+      <div class="p-4 border-t flex">
+        <input id="user-input" type="text" placeholder="Type a message" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Send</button>
+      </div>
+    </div>
+    `;
+        document.body.appendChild(chatContainer);
+        console.log(chatContainer);
+
+        const chatbox = document.getElementById("chatbox");
+        const userInput = document.getElementById("user-input");
+        const sendButton = document.getElementById("send-button");
+        const openChatButton = document.getElementById("open-chat");
+        const closeChatButton = document.getElementById("close-chat");
+
+        let isChatboxOpen = true; // Set the initial state to open
+
+        // Function to toggle the chatbox visibility
+        function toggleChatbox() {
+            chatContainer.classList.toggle("hidden");
+            isChatboxOpen = !isChatboxOpen; // Toggle the state
+        }
+
+        // Add an event listener to the open chat button
+        openChatButton.addEventListener("click", toggleChatbox);
+
+        // Add an event listener to the close chat button
+        closeChatButton.addEventListener("click", toggleChatbox);
+
+        // Add an event listener to the send button
+        sendButton.addEventListener("click", function () {
+            const userMessage = userInput.value;
+            if (userMessage.trim() !== "") {
+                addUserMessage(userMessage);
+                respondToUser(userMessage);
+                userInput.value = "";
+            }
+        });
+
+        userInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                const userMessage = userInput.value;
+                addUserMessage(userMessage);
+                respondToUser(userMessage);
+                userInput.value = "";
+            }
+        });
+
+        function addUserMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("mb-2", "text-right");
+            messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function addBotMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("mb-2");
+            messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function respondToUser(userMessage) {
+            // Replace this with your chatbot logic
+            setTimeout(() => {
+                addBotMessage(`I heard you said "${userMessage}"`);
+            }, 500);
+
+            // Create AJAX request
+            /*
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://192.168.0.0:8080/ask'); // Replace with your server's URL
+            xhr.setRequestHeader('Content-Type', 'application/json');
+    
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+        answerOutput.textContent += "Response: " + response.answer + "\n";
+                } else {
+          answerOutput.textContent = 'Error: Server responded with status ' + xhr.status;
+                }
+            };
+    
+        xhr.onerror = function () {
+          answerOutput.textContent = 'Error: Network error';
+            };
+    
+        xhr.send(JSON.stringify({userMessage: userMessage }));
+        */
+        }
+    </script>
+</body>
+
+</html>

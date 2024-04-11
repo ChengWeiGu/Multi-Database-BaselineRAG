@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR Copilot Demo</title>
+    <!-- 引入 CSS 文件 -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles-chat.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="header-container">
+        <div> 
+            <h1 id = "header">Weintek Service Request Copilot</h1>
+        </div>
+        <div class="about">
+            About
+            <div id="version_div" class="version"></div>
+        </div>
+    </div>
+    
+    <div id="mode_container">
+        <label for="select_mode">Select Interaction Model: </label>
+        <select id="select_mode">
+            <option value="chat_gen" selected>Chat Generation (gpt-4-turbo)</option>
+            <option value="image_gen">Image Generation (Dalle3)</option>
+        </select>
+    </div>
+
+    <div id="chat_feedback_container">
+        <div id="chat_container" class="bg-white shadow-md rounded-lg w-full">
+            <div class="p-3 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
+                <p class="text-md font-semibold">Chat Box</p>
+            </div>
+
+            <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+                <div class="mb-2 robot-message-container">
+                    <p>
+                        <div class="icon">
+                            <img src="/static/icon/chatbot_v1.svg" alt="Your Icon" class="custom-robot-icon">
+                        </div>
+                        <div class="robot-message">
+                            <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">Hi, how may I help you today?</p>
+                        </div>
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-4 border-t flex">
+                <textarea id="user-input" type="text" placeholder="Type a message" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <button id="submit_button" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300">Submit</button>
+                <button id="clear_chat_button" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300">Clear</button>
+                <!--<button id="test_button" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300">test</button>-->
+            </div>
+        </div>
+
+        <div id="feedback_container">
+            <div>
+                <label for="select_score">Score:</label>
+                <select id="select_score" name="select_score">
+                    {% for i in range(1,11) %}
+                        <option value="{{i}}" {% if i == 10 %}selected{% endif %}>{{i}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="select_assist">Assist You in response?</label>
+                <select id="select_assist" name="select_assist">
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                </select>
+            </div>
+            <div>
+                <label for="select_OK">Generation is OK?</label>
+                <select id="select_OK" name="select_OK">
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                </select>
+            </div>
+            <div>
+                <label for="input_text_srcRef">Source of information:</label>
+                <textarea id="input_text_srcRef" class="rounded-lg border-b" name="input_text_srcRef" placeholder = "請提供資料來源或網址 Please provide the information source"></textarea>
+                <input type="file" id="fileInput" accept=".pdf,.png,.docx,.jpeg,.jpg,.ppt,.doc,.xlsx,.xls,.html">
+            </div>
+            <div>
+                <label for="input_text_feedback">Feedback: </label>
+                <textarea id="input_text_feedback" class="rounded-lg border-b" name="input_text_feedback" placeholder = "留下您寶貴的意見，例如答案與問題是否有相關性、問題屬於甚麼類別、或建議更好的回答，或需要其它經驗進行答覆，並請針對提供資料的來源加以說明。&#10;&#10;Please leave your valuable feedback, such as whether the answers are relevant to the questions, suggestions for better responses, category of the issue, or if other experiences are needed to answer. Please provide the reference source and its description."></textarea>
+                <button id="send_button" class="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition duration-300">Send</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/saveload.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/regex.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stream.js') }}"></script>
+
+</body>
+</html>

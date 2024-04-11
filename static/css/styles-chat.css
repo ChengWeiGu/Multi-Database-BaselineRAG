@@ -1,0 +1,314 @@
+/* styles.css */
+
+/* 定義一個名為 --width 的變數並設置值為 1000px */
+:root {
+    --var_w: 1280px;
+    --var_h: 800px;
+    --var_tbl_w: 700px;
+}
+
+body {
+    background-color: rgb(227, 237, 241);
+}
+
+/***********Header Domain************/
+.header-container {
+    display: flex;
+    align-items: flex-start;
+  }
+
+#header {
+    background-color: rgb(57, 64, 77);
+    height: 60px;
+    display: flex;
+    width: 1780px;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    color : white;
+    font-size: 28px;
+    margin: 0px 0px 0px 0px;
+}
+
+.about {
+    display: flex; 
+    align-items: center; /* 垂直居中 */
+    height: 60px;
+    background-color: rgb(57, 64, 77);
+    cursor: pointer;
+    color : white;
+    margin: 0px 0px 0px 0px;
+  }
+
+
+.version {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    /* transform: translateX(-50%); */
+    transform: translate(-50%,30px);
+}
+
+.about:hover .version {
+    visibility: visible;
+}
+/***********Header Domain************/
+
+
+/* .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%; 
+    height: 300px; 
+    padding: 20px;
+    margin: 60px 0px 10px 0px;
+} */
+
+
+#separator {
+    margin: 0px 20px 10px 20px;
+    font-size: 20px;
+}
+
+/*submit btn*/
+#submit_button {
+    width: 80px;
+    height: 40px;
+    margin: 0px 0px 20px 20px;
+}
+
+.stop_button {
+    background-color: red !important;
+  }
+
+#clear_chat_button {
+    background-color: rgb(90, 223, 28);
+    width: 80px;
+    height: 40px;
+    margin: 0px 0px 20px 20px;
+}
+
+
+.spinner {
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(-0.15deg); }
+    100% { transform: rotate(0.15deg); }
+}
+
+
+.cursor {
+    font-size: 20px;
+    /* background-color: black; */
+    animation: blinkCursor 1s infinite;
+}
+
+@keyframes blinkCursor {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+
+#elementList > li {
+    margin-top: 5px;
+}
+
+#elementList > li > a:visited, #elementList > li > a {
+    color: blue;
+}
+
+
+#input_text_srcRef {
+    width: 500px;
+    height: 30px;
+    margin: 10px 10px 10px 0px;
+    resize: none;
+}
+
+#input_text_feedback {
+    width: 500px;
+    height: 250px;
+    resize: none;
+    font-size: 14px;
+    margin: 10px 10px 10px 0px;
+}
+
+
+
+#rag_generate_model_div, #mode_container{
+    width: 1000px;
+    margin: 20px 10px 0px 20px;
+}
+
+#select_mode {
+    margin-left: 10px;
+}
+
+
+label {
+    font-size: 16px;
+}
+
+select {
+    font-size: 14px;
+}
+
+/*for chat container*/
+.bg-white {
+    width: var(--var_w);
+    height: auto; /* 自動調整以包裹內容 */
+    margin: 20px 10px 0px 20px;
+}
+
+#chatbox {
+    width: 100%;
+    height: calc(var(--var_h) - 180px);
+}
+
+#user-input {
+    width: 100%;
+    height: 100px;
+    resize: none;
+}
+
+
+#chat_container {
+    width: var(--var_w);
+    height: var(--var_h);
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 10px 0px 20px;
+}
+
+#chat_container > div {
+    width: var(--var_w);
+}
+
+#feedback_container {
+    width: 400px;
+    height: 500px;
+    margin: 30px 10px 10px 0px;
+}
+
+#feedback_container > div{
+    margin: 0px 10px 20px 20px;
+}
+
+#chat_feedback_container {
+    display: flex;
+    align-items: flex-start;
+    /* padding: 20px; */
+    margin: 0px 0px 20px 0px;
+}
+
+.btn_disabled {
+    background-color: gray !important; /* 設置背景顏色為灰色 */
+    cursor: not-allowed; /* 修改滑鼠樣式為不允許 */
+}
+
+
+
+@keyframes fadeLoop {
+    0% {
+        opacity: 0.2; /* 透明度從 0.5 開始 */
+    }
+    50% {
+    opacity: 1; /* 透明度到達最大值 */
+    }
+    100% {
+    opacity: 0.2; /* 透明度回到 0.5 */
+    }
+}
+  
+.fade-loop {
+    animation: fadeLoop 2s linear infinite !important; /* 設置動畫效果 */
+}
+
+
+
+/* For Robot */
+.robot-message-container {
+    display: flex;
+    align-items: flex-start; /* 將內容對齊到容器的頂部 */
+}
+.custom-robot-icon {
+    width: 60px; /* 圖標寬度 */
+    height: 60px; /* 圖標高度 */
+    margin-right:10px;
+}
+.robot-message {
+    flex: 1; /* 讓訊息佔據剩餘的空間 */
+}
+/*robot文字強迫靠左*/
+.robot-message > div {
+    text-align: left !important;
+    width: auto !important; /* 將寬度設置為自動，以自動換行 */
+    max-width: 800px !important; /* 設置最大寬度 */
+    overflow-x: auto; /* 如果表格过宽，显示水平滚动条 */
+}
+
+/* For User */
+.user-message-container {
+    display: flex;
+    flex-direction: row-reverse; /* 將元素反向排列 */
+    align-items: flex-start; /* 將內容對齊到容器的頂部 */
+}
+.custom-user-icon {
+    width: 60px; /* 圖標寬度 */
+    height: 60px; /* 圖標高度 */
+    margin-left:10px;
+}
+.user-message {
+    flex: 1; /* 讓訊息佔據剩餘的空間 */
+    margin-top: 5px;
+}
+/*user文字強迫靠左*/
+.user-message > div {
+    text-align: left !important;
+    width: auto !important; /* 將寬度設置為自動，以自動換行 */
+    max-width: 800px !important; /* 設置最大寬度 */
+}
+
+
+/*code-block使用*/
+.code-block {
+    background-color: #181515;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    white-space: pre-wrap; /* 保留空白符號並允許自動換行 */
+    text-align: left !important;
+    width: auto !important; /* 將寬度設置為自動，以自動換行 */
+    max-width: 800px !important; /* 設置最大寬度 */
+    color: white;
+}
+
+
+.robot-table {
+    border-collapse: collapse !important;
+    /* width: 100% !important; */
+    border: 1px solid #000 !important;
+}
+th { 
+    background-color: #009FCC;
+    padding:10px;
+    border:1px solid #000;
+    font-size:16px;
+    color:#fff;
+    text-align:center !important;
+  }
+td {
+    border:1px solid #000 !important;
+    padding:5px !important;
+    text-align:left !important;
+    font-size:14px;
+}
+
+
+
