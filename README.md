@@ -23,13 +23,13 @@ Here is a simple script to implement RAG with Azure OpenAI Resource
 | Setting  | Description |
 | ------------- | ------------- |
 | CHROMA_DB  | Five databases used in this case. (Path setting is needed)  |
-| Azure Resource  | Three regions used (randomly choose one).  |
+| Azure Resource  | Five regions used (probabilistic choice).  |
 | Model           |  Model name built on AOAI. (Should be consistent)     |
 | Parameters      |  Temperature & max_output_token. (In fact, more parameters available)  |   
 
 ## Reverse Proxy Settings  
 1. In this case, we use nginx as the proxy server  
-2. note that to set "nginx-1.24.0\conf\nginx.conf" before runing nginx.exe    
+2. Note that to set "nginx-1.24.0\conf\nginx.conf" before runing nginx.exe    
 3. Overall, the system is deployed in environment of flask + waitress + nginx:  
 
 | Setting  | Description |
