@@ -57,6 +57,7 @@ image_gen_settings = {
     'api_type':config['AOAI_SE']['api_type']
 }
 
+
 chat_vision_settings = {
     'endpoint':config['AOAI_WU']['endpoint'],
     'api_key1':config['AOAI_WU']['api_key1'],
@@ -67,12 +68,22 @@ chat_vision_settings = {
     'api_type':config['AOAI_WU']['api_type']
 }
 
+chat_vision_enhance_cognitive_settings = {
+    'endpoint':config['ACOG_VIS_ENHANCE_WU']['endpoint'],
+    'api_key1':config['ACOG_VIS_ENHANCE_WU']['api_key1'],
+    'api_key2':config['ACOG_VIS_ENHANCE_WU']['api_key2'],
+    'region':config['ACOG_VIS_ENHANCE_WU']['region'],
+    'api_version':config['ACOG_VIS_ENHANCE_WU']['api_version'],
+    'api_type':config['ACOG_VIS_ENHANCE_WU']['api_type']
+}
+
 
 # params
 max_completion_token = int(config['PARAMETERS']['max_completion_token'])
 temperature = float(config['PARAMETERS']['temperature'])
 system_prompt=config['PROMPT']['system_prompt'] + "\nThe introduction as below:\n" + Tools.read_introduction_doc()
-
+# params for gpt4-vision
+max_vision_completion_token = int(config['PARAMETERS']['max_vision_completion_token'])
 
 def random_set_azure_chat_resc():
     global chat_settings, chat_prob
@@ -132,6 +143,7 @@ def random_set_azure_imggen_resc():
     image_gen_settings['image_generation_model'] = config['MODEL']['image_generation_model']
     image_gen_settings['api_type'] = config[random_resc_name]['api_type']
 
+
 # use gpt4-vision
 def random_set_azure_chat_vision_resc():
     global chat_vision_settings
@@ -144,7 +156,14 @@ def random_set_azure_chat_vision_resc():
     chat_vision_settings['api_version'] = config[random_resc_name]['api_version']
     chat_vision_settings['chat_vision_model'] = config['MODEL']['chat_vision_gpt4']
     chat_vision_settings['api_type'] = config[random_resc_name]['api_type']
-
+    if random_resc_name == 'AOAI_WU':
+        chat_vision_enhance_cognitive_settings['endpoint'] = config['ACOG_VIS_ENHANCE_WU']['endpoint']
+        chat_vision_enhance_cognitive_settings['api_key1'] = config['ACOG_VIS_ENHANCE_WU']['api_key1']
+        chat_vision_enhance_cognitive_settings['api_key2'] = config['ACOG_VIS_ENHANCE_WU']['api_key2']
+        chat_vision_enhance_cognitive_settings['region'] = config['ACOG_VIS_ENHANCE_WU']['region']
+        chat_vision_enhance_cognitive_settings['api_version'] = config['ACOG_VIS_ENHANCE_WU']['api_version']
+        chat_vision_enhance_cognitive_settings['api_type'] = config['ACOG_VIS_ENHANCE_WU']['api_type']
+        
 
 # initially, random-choose once
 random_set_azure_chat_resc()
@@ -417,6 +436,7 @@ def chat_completion_openai_history_stream(openai_history_messages:list=[], model
                 yield word
                 time.sleep(0.01)
 
+
 # vision model: gpt4-vision (no enhancement)
 def chat_completion_vision_openai(query="Describe this picture:",image_rul=None, image_filename=None):
     # to comfirm use correct resc for vision
@@ -445,9 +465,55 @@ def chat_completion_vision_openai(query="Describe this picture:",image_rul=None,
                                     }
                                 ]}
                             ],
-                            max_tokens=max_completion_token 
+                            max_tokens=max_vision_completion_token 
                         )
         replied_message = response.choices[0].message.content
+        return replied_message
+    except Exception as e:
+        error_reason = f"[OPENAI ERROR]{str(e)}"
+        print(error_reason)
+        return error_reason
+
+
+# vision model: gpt4-vision (with enhancement)
+def chat_completion_vision_enhance_openai_history(openai_history_messages:list=[]):
+    # to comfirm use correct resc for vision
+    random_set_azure_chat_vision_resc()
+    print('az_region: ', chat_vision_settings['region'])
+    try:
+        client = AzureOpenAI(
+                            api_key = chat_vision_settings['api_key1'], 
+                            api_version = chat_vision_settings['api_version'], 
+                            azure_endpoint = chat_vision_settings['endpoint'],
+                        )
+        response = client.chat.completions.create(
+                            model=chat_vision_settings['chat_vision_model'],
+                            messages=[
+                                { "role": "system", "content": "You are a helpful assistant." },
+                                { "role": "user", "content": openai_history_messages}
+                            ],
+                            extra_body={
+                                "data_sources":[
+                                    {
+                                        "type":"AzureComputerVision",
+                                        "parameters":{
+                                            "endpoint": chat_vision_enhance_cognitive_settings['endpoint'],
+                                            "key": chat_vision_enhance_cognitive_settings['api_key1']
+                                        }
+                                    }],
+                                "enhancements":{
+                                    "ocr": {
+                                        "enabled": True
+                                    },
+                                    "grounding": {
+                                        "enabled": True
+                                    }
+                                }
+                            },
+                            max_tokens=max_vision_completion_token 
+                        )
+        replied_message = response.choices[0].message.content
+        # result = response.json()
         return replied_message
     except Exception as e:
         error_reason = f"[OPENAI ERROR]{str(e)}"
@@ -466,7 +532,6 @@ if __name__ == "__main__":
     # print(generate_image_openai("a crockdile floating on the water"))
     
     # chat_completion_openai_stream(message="中國歷史上誰統一天下?")
-    
     # import os
     # result = ""
     # for word in chat_completion_openai_stream(message="提供一個python code範例"):
@@ -475,7 +540,36 @@ if __name__ == "__main__":
     #         result += word
     #         print(result)
     
-    result = chat_completion_vision_openai(image_rul="url")
+    # gpt4-vision
+    # result = chat_completion_vision_openai(image_rul="url")
+    # gpt4-vision enhancement
+    encoded_image1 = base64.b64encode(open(r"D:\Projects\EBProWhisper\PFXGP4603TAD_screenshot.jpg", "rb").read()).decode('ascii')
+    encoded_image2 = base64.b64encode(open(r"D:\Projects\EBProWhisper\home.jpg", "rb").read()).decode('ascii')
+    openai_history_messages = [{ 
+                "type": "text", 
+                "text": "This image shows a hmi screen which designed for user to operate." 
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jepg;base64,{encoded_image1}"
+                }
+            },
+            {
+                "type": "text",
+                "text": "This element is extracted from the screenshot. please describe the element and give it a name"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jepg;base64,{encoded_image2}"
+                }
+            },
+            {
+                "type": "text",
+                "text": "output your result with {\"descr\":<element description>,\"name\":<element name>}"
+            }]
+    result = chat_completion_vision_enhance_openai_history(openai_history_messages=openai_history_messages)
     print(result)
     pass
     
