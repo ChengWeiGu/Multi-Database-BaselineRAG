@@ -133,6 +133,25 @@ function PreventHtml2Code(text) {
 }
 
 
+// to process streaming text
+function regex_stream(message) {
+    //文字code處理
+    message = codeText2HTML(message);
+    //重點標頭
+    message = header2HTML(message);
+    //公式變成markdown格式
+    message = formula2Markdown(message);
+    //highlight文字
+    message = highlightMarkText(message);
+    // 註釋+url處理
+    message = Anno_Url_2HTML(message);
+    //換行處理
+    message = message.replace(/\n/g, "<br>");
+    return message;
+}
+
+
+// to process the final text
 function regex_flow(message) {
     //表格處理
     message = text2HTMLTable(message);

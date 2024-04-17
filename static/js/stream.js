@@ -37,12 +37,15 @@ submitButton.addEventListener('click', function() {
             const read = () => {
                 return reader.read().then(({ done, value }) => {
                     if (done) {
+                        // 最後一次regex處理 (增加table的處理)
+                        let realTimeMsg = regex_flow(result);
+                        botMsgDivElement.innerHTML = `${realTimeMsg} <span id="${BotIDs[1]}" class="cursor">|</span>`
                         return { result, finalData };
                     }
                     const chunk = decoder.decode(value);
                     result += chunk;
-                    // 保持換行顯示, cursor保持在最後, real-time doing regex
-                    let realTimeMsg = regex_flow(result);
+                    // 保持換行顯示, cursor保持在最後, real-time doing streaming regex
+                    let realTimeMsg = regex_stream(result);
                     botMsgDivElement.innerHTML = `${realTimeMsg} <span id="${BotIDs[1]}" class="cursor">|</span>`
                     lastOutputMessage = result;
                     chatbox.scrollTop = chatbox.scrollHeight;
