@@ -205,9 +205,7 @@ def collect_feedback():
     # acquire feedback from frontend
     json_str = request.form['json_data']
     json_data = json.loads(json_str)
-    uploaded_file = request.files['file']
-    uploaded_filename = uploaded_file.filename
-    json_data["uploaded_filename"] = uploaded_filename
+    uploaded_file = request.files.get('file')
     json_data["client_ip"] = request.remote_addr
     query = json_data["query"]
     generation_ans = json_data["generation"]
@@ -217,8 +215,10 @@ def collect_feedback():
     xml_filename = feedback_file_path + "/" + datetime.datetime.now().strftime("Feedback_%Y%m%d.html")
     if (query.replace(" ","") != "") and (generation_ans != ""):
         try:
-            if uploaded_filename != '':
+            if uploaded_file is not None:
+                uploaded_filename = uploaded_file.filename
                 target_filename = feedback_file_path + "/" + uploaded_filename
+                # rename file if exists
                 if exists(target_filename):
                     name, extension = splitext(uploaded_filename)
                     new_filename = "{}{}{}".format(name,
@@ -226,14 +226,18 @@ def collect_feedback():
                                                     extension)
                     target_filename = feedback_file_path + "/" + new_filename
                 uploaded_file.save(target_filename)
-                json_data["uploaded_filename"] = target_filename
+            else:
+                target_filename = ""
+            
+            json_data["uploaded_filename"] = target_filename
             status = 'success'
         except Exception as e:
             error_reason = str(e)
+        else:
+            # write log
+            feedback_logger(filename=xml_filename, data=json_data)
     else:
         error_reason = "The website has been freshed, please ask a new question and try again."
-    # write log
-    feedback_logger(filename=xml_filename, data=json_data)
     # print(json_data)
     return  jsonify({"status":status,
                     "error_reason":error_reason})
