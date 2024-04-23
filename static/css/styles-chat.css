@@ -2,7 +2,7 @@
 
 /* 定義一個名為 --width 的變數並設置值為 1000px */
 :root {
-    --var_w: 1280px;
+    --var_w: 1260px;
     --var_h: 800px;
     --var_tbl_w: 700px;
 }
@@ -39,6 +39,9 @@ body {
     margin: 0px 0px 0px 0px;
   }
 
+.about:hover .version {
+    visibility: visible;
+}
 
 .version {
     visibility: hidden;
@@ -51,9 +54,7 @@ body {
     transform: translate(-50%,30px);
 }
 
-.about:hover .version {
-    visibility: visible;
-}
+
 /***********Header Domain************/
 
 
@@ -129,6 +130,8 @@ body {
     height: 30px;
     margin: 10px 10px 10px 0px;
     resize: none;
+    font-size: 14px;
+    border: 1px solid rgb(231, 223, 223); 
 }
 
 #input_text_feedback {
@@ -137,6 +140,13 @@ body {
     resize: none;
     font-size: 14px;
     margin: 10px 10px 10px 0px;
+    border: 1px solid rgb(231, 223, 223); 
+}
+
+.feedback_dropdown {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
 }
 
 
@@ -182,22 +192,31 @@ select {
     width: var(--var_w);
     height: var(--var_h);
     justify-content: space-between;
+    /* justify-content: center; */
     align-items: center;
     margin: 20px 10px 0px 20px;
 }
 
-#chat_container > div {
+/* #chat_container > div {
     width: var(--var_w);
-}
+} */
 
 #feedback_container {
-    width: 400px;
-    height: 500px;
-    margin: 30px 10px 10px 0px;
+    display: none;
+    flex-direction: column;
+    width: 540px;
+    height: 800px;
+    margin: 20px 10px 10px 0px;
+    border: 1px solid rgb(192, 186, 186); 
+    border-radius: 10px;
+    background-color: white;
 }
 
-#feedback_container > div{
-    margin: 0px 10px 20px 20px;
+#feedback_container .form_content{
+    margin: 30px 10px 20px 20px;
+    width: 500px;
+    /* display: flex;
+    flex-direction: column; */
 }
 
 #chat_feedback_container {
@@ -235,12 +254,41 @@ select {
 /* For Robot */
 .robot-message-container {
     display: flex;
-    align-items: flex-start; /* 將內容對齊到容器的頂部 */
+    align-items: flex-start; /*將內容對齊到容器的頂部*/
 }
+/* 頭像顯示 */
 .custom-robot-icon {
     width: 60px; /* 圖標寬度 */
     height: 60px; /* 圖標高度 */
     margin-right:10px;
+}
+.robot-toolbar-container {
+    display: none;
+    align-items: center;
+    width: 215px;
+    background-color: white;
+    border: 1px solid #ccc; 
+    border-radius: 6px;
+    margin: 0px 1px 1px 8px;
+    
+  }
+/* icon + text 容器 */
+.icon-text-tool-container{
+    display: flex;
+    min-width: 10%;
+    margin: 2px 2px 2px 2px;
+}
+.icon-text-tool-container:hover{
+    background-color: #e1e8eb; /* 懸停時背景顏色變為藍色 */
+    cursor: pointer;
+    border-radius: 4px;
+}
+/* Tool圖示 */
+.custom-tool-icon {
+    width: 15px; /* 圖標寬度 */
+    height: 15px; /* 圖標高度 */
+    margin-left: 5px;
+    margin-right: 5px;
 }
 .robot-message {
     flex: 1; /* 讓訊息佔據剩餘的空間 */

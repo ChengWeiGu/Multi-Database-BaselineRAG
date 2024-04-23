@@ -4,13 +4,13 @@ const userInput = document.getElementById("user-input");
 const submitButton = document.getElementById("submit_button");
 const sendButton = document.getElementById("send_button");
 const clearChatButton = document.getElementById("clear_chat_button");
+const closeFeedbackFormButton = document.getElementById("close-feedback-form");
 const select_mode = document.getElementById("select_mode");
 const fileInput = document.getElementById("fileInput");
 const srcRef = document.getElementById("input_text_srcRef"); //來源網址
 var software_version = "";
 var max_chat_history = 5;
-var lastInputMessage = "";
-var lastOutputMessage = "";
+var lastChatID = ""; // only record the last msg_id for generation mode
 var chat_controller;
 var img_controller;
 
@@ -41,8 +41,8 @@ sendButton.addEventListener('click', function() {
         feedback : input_text_feedback.value,
         userAgent : userAgent,
         username : username,
-        query : lastInputMessage,
-        generation : lastOutputMessage,
+        query : feedback_query,
+        generation : feedback_generation,
         retrieval_generate_model : select_generate_model,
         software_version : software_version,
         srcRef : srcRef.value
@@ -59,6 +59,7 @@ sendButton.addEventListener('click', function() {
     .then(data => {
         if (data.status == 'success'){
             alert("Send Successifully");
+            feedback_container.style.display = "none";
         } else {
             alert(data.error_reason);
         }   
@@ -66,9 +67,10 @@ sendButton.addEventListener('click', function() {
 })
 
 
+
 // send request with enter when cursor in textarea
 userInput.addEventListener('keydown',function(event){
-    if (event.key == 'Enter' && !event.shiftKey && submitButton.textContent == 'Submit' && userInput.value.trim() != '') {
+    if (event.key == 'Enter' && !event.shiftKey && submitButton.textContent == 'Submit') {
         event.preventDefault(); //防止 textarea換行
         submitButton.click();
     };
@@ -110,7 +112,9 @@ function disableBtn() {
 }
 
 
-function addUserMessage(message) {
+
+function addUserMessage(message,now) {
+    let userMsgID = "userMsg_" + now;
     const messageElement = document.createElement("div");
     messageElement.classList.add("mb-2", "text-right","user-message-container");
     message = PreventHtml2Code(message); //preprocess
@@ -119,14 +123,44 @@ function addUserMessage(message) {
                                     <img src="/static/icon/user_v1.svg" alt="Your Icon" class="custom-user-icon">
                                 </div>
                                 <div class="user-message">
-                                    <div class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</div>
+                                    <div id="${userMsgID}" class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</div>
                                 </div>`;
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 
-function addBotMessage(message) {
+
+function addBotMessage(message,now) {
+    let botMsgID = "botMsg_" + now;
+    messageElement.classList.add("mb-2", "robot-message-container");
+    //正則化處理
+    message = regex_flow(message);
+    messageElement.innerHTML = `
+                                <div class="icon">
+                                    <img src="/static/icon/chatbot_v1.svg" alt="Your Icon" class="custom-robot-icon">
+                                </div>
+                                <div class="robot-message">
+                                    <div id="${botMsgID}" class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">
+                                        ${message}<br><br><span style="font-size:12px;">Response ID : ${now}</span>
+                                    </div>
+                                </div>`;
+    
+    chatbox.appendChild(messageElement);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+
+
+function addBotMessageID(message,now) {
+    let botMsgID = "botMsg_" + now;
+    let toolbarID = "toolbar_" + now;
+    let feedbackBtnID = "feedbackBtn_" + now;
+    let feedbackBtnIconID = "feedbackBtnIcon_" + now;
+    let copyBtnID = "copyBtn_" + now;
+    let copyBtnIconID = "copyBtnIcon_" + now;
+    let regenBtnID = "regenBtn_" + now;
+    let regenBtnIconID = "regenBtnIcon_" + now;
     const messageElement = document.createElement("div");
     messageElement.classList.add("mb-2", "robot-message-container");
     //正則化處理
@@ -136,7 +170,26 @@ function addBotMessage(message) {
                                     <img src="/static/icon/chatbot_v1.svg" alt="Your Icon" class="custom-robot-icon">
                                 </div>
                                 <div class="robot-message">
-                                    <div class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</div>
+                                    <div id="${botMsgID}" class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">
+                                        ${message}<br><br><span style="font-size:12px;">Response ID : ${now}</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div id="${toolbarID}" class="robot-toolbar-container">
+                                        <div id="${feedbackBtnID}" class="icon-text-tool-container" onclick="showFeedbackPopup(this)">
+                                            <img id="${feedbackBtnIconID}" src="/static/icon/feedback_v1.svg" alt="Your Icon" class="custom-tool-icon">
+                                            <span style="font-size:12px;">Feedback</span>
+                                        </div>
+                                        <div id="${copyBtnID}" class="icon-text-tool-container" onclick="copyRobotText(this)">
+                                            <img id="${copyBtnIconID}" src="/static/icon/copy_v1.svg" alt="Your Icon" class="custom-tool-icon">
+                                            <span style="font-size:12px;">Copy</span>
+                                        </div>
+                                        <div id="${regenBtnID}" class="icon-text-tool-container" onclick="reGenText(this)">
+                                            <img id="${regenBtnIconID}" src="/static/icon/regen_v1.svg" alt="Your Icon" class="custom-tool-icon">
+                                            <span style="font-size:12px;">Retry</span>
+                                        </div>
+                                    </div>
                                 </div>`;
     
     chatbox.appendChild(messageElement);
@@ -155,7 +208,8 @@ function removeLastMessage() {
 
 
 // customize the bot message for image generation
-function addBotMessageForImageMode(image_url,image_descr="") {
+function addBotMessageForImageMode(image_url,image_descr,now) {
+    let botMsgID = "botMsg_" + now;
     const messageElement = document.createElement("div");
     messageElement.classList.add("mb-2", "robot-message-container");
     let message = `Sure, here is your image:\n
@@ -169,7 +223,9 @@ function addBotMessageForImageMode(image_url,image_descr="") {
                                     <img src="/static/icon/chatbot_v1.svg" alt="Your Icon" class="custom-robot-icon">
                                 </div>
                                 <div class="robot-message">
-                                    <div class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</div>
+                                    <div id="${botMsgID}" class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">
+                                        ${message}<br><br><span style="font-size:12px;">Response ID : ${now}</span>
+                                    </div>
                                 </div>`;
     
     chatbox.appendChild(messageElement);
@@ -213,7 +269,7 @@ function acquire_history_messages(qa_cnt) {
     if (userMessages.length > 0) {
         var startIndex = Math.max(userMessages.length - qa_cnt,0);
         for (var i = startIndex; i < userMessages.length; i++) {
-            lastQAMessages.push([userMessages[i].textContent.trim(),robotMessages[i].textContent.trim()]);
+            lastQAMessages.push([userMessages[i].textContent.trim(),robotMessages[i].textContent.trim().replace(/Response ID : \d+/g, "")]); // robot msg去除 Response ID
         }
     }
     return lastQAMessages;

@@ -55,35 +55,48 @@
         </div>
 
         <div id="feedback_container">
-            <div>
-                <label for="select_score">Score:</label>
-                <select id="select_score" name="select_score">
+            <div class="p-3 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
+                <p class="text-md font-semibold">Feedback Form</p>
+                <button id="close-feedback-form" class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+            </div>
+            <div class="form_content">
+                <label id="show_selected_label_id" style="background-color:yellow;">Response ID : Not selected </label>
+            </div>
+            <div class="form_content">
+                <label for="select_score">(1) Score (1~10) :</label>
+                <select id="select_score" name="select_score" class="feedback_dropdown">
                     {% for i in range(1,11) %}
-                        <option value="{{i}}" {% if i == 10 %}selected{% endif %}>{{i}}</option>
+                        <option value="{{i}}">{{i}}</option>
+                        <!--<option value="{{i}}" {% if i == 10 %}selected{% endif %}>{{i}}</option>-->
                     {% endfor %}
                 </select>
             </div>
-            <div>
-                <label for="select_assist">Assist You in response?</label>
-                <select id="select_assist" name="select_assist">
+            <div class="form_content">
+                <label for="select_assist">(2) Assist You in response ?</label>
+                <select id="select_assist" name="select_assist" class="feedback_dropdown">
                     <option value="Y">Y</option>
                     <option value="N">N</option>
                 </select>
             </div>
-            <div>
-                <label for="select_OK">Generation is OK?</label>
-                <select id="select_OK" name="select_OK">
+            <div class="form_content">
+                <label for="select_OK">(3) Generation is OK ?</label>
+                <select id="select_OK" name="select_OK" class="feedback_dropdown">
                     <option value="Y">Y</option>
                     <option value="N">N</option>
                 </select>
             </div>
-            <div>
-                <label for="input_text_srcRef">Source of information:</label>
+            <div class="form_content">
+                <label for="input_text_srcRef">(4) Source of information:</label>
                 <textarea id="input_text_srcRef" class="rounded-lg border-b" name="input_text_srcRef" placeholder = "請提供資料來源或網址 Please provide the information source"></textarea>
+                <label for="fileInput">(5) Upload your file : </label>
                 <input type="file" id="fileInput" accept=".pdf,.png,.docx,.jpeg,.jpg,.ppt,.doc,.xlsx,.xls,.html">
             </div>
-            <div>
-                <label for="input_text_feedback">Feedback: </label>
+            <div class="form_content">
+                <label for="input_text_feedback">(6) Feedback: </label>
                 <textarea id="input_text_feedback" class="rounded-lg border-b" name="input_text_feedback" placeholder = "留下您寶貴的意見，例如答案與問題是否有相關性、問題屬於甚麼類別、或建議更好的回答，或需要其它經驗進行答覆，並請針對提供資料的來源加以說明。&#10;&#10;Please leave your valuable feedback, such as whether the answers are relevant to the questions, suggestions for better responses, category of the issue, or if other experiences are needed to answer. Please provide the reference source and its description."></textarea>
                 <button id="send_button" class="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition duration-300">Send</button>
             </div>

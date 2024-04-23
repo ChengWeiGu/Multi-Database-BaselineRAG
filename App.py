@@ -237,7 +237,7 @@ def collect_feedback():
             # write log
             feedback_logger(filename=xml_filename, data=json_data)
     else:
-        error_reason = "The website has been freshed, please ask a new question and try again."
+        error_reason = "The website has been freshed or you have not selected a response id yet. please try again."
     # print(json_data)
     return  jsonify({"status":status,
                     "error_reason":error_reason})
@@ -245,9 +245,9 @@ def collect_feedback():
 
 
 if __name__ == '__main__':
-    # app.run(host=current_ip,port=6688,debug=True)
+    app.run(host=current_ip,port=6688,debug=True)
     # app.run(host="127.0.0.1",port=6688,debug=True)
     # serve(app, host="127.0.0.1",port=6688,ident=True)
-    serve(app, host=current_ip,port=6688,ident=True)
+    # serve(app, host=current_ip,port=6688,ident=True)
     # serve(app, host=current_ip,port=6689,ident=True)
     pass

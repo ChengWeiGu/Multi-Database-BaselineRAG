@@ -8,7 +8,11 @@ function clearLocalStorage() {
 window.onload = function() {
     var savedChat = localStorage.getItem('chatbox');
     if (savedChat) {
+        // reload savechat
         document.getElementById('chatbox').innerHTML = savedChat;
+        // reload data
+        data = JSON.parse(localStorage.getItem('data'));
+        lastChatID = data.lastChatID;
         //滾動到最底部
         var chatbox = document.getElementById('chatbox');
         chatbox.scrollTop = chatbox.scrollHeight;
@@ -17,6 +21,10 @@ window.onload = function() {
 
 // 存儲聊天記錄到本地存儲
 function saveChatItem() {
+    // chatbox block
     var chatbox = document.getElementById('chatbox').innerHTML;
     localStorage.setItem('chatbox', chatbox);
+    // save info data
+    data = {"lastChatID" : lastChatID}
+    localStorage.setItem('data', JSON.stringify(data));
 }

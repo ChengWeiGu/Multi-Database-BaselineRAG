@@ -1,0 +1,117 @@
+/* styles.css */
+body {
+    background-color: rgb(227, 237, 241);
+}
+
+
+#header {
+    background-color: rgb(57, 64, 77);
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color : white;
+    margin: -8px -8px 0px -8px;
+}
+
+#qa_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%; 
+    height: 300px; 
+    padding: 20px;
+    margin: 50px 0px 10px 0px;
+}
+
+/* .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60%; 
+    height: 300px; 
+    padding: 20px;
+    margin: 60px 0px 10px 0px;
+} */
+
+
+
+#input_text, #output_text {
+    width: 680px;
+    height: 300px;
+    resize: none;
+    border-width: 2px; 
+    font-size: 14px;
+    margin: 10px 0px 10px 0px;
+}
+
+
+#separator {
+    margin: 0px 20px 10px 20px;
+    font-size: 20px;
+}
+
+#submit_button {
+    width: 80px;
+    height: 40px;
+    margin: 0px 10px 20px 20px;
+}
+
+
+.spinner {
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(-0.15deg); }
+    100% { transform: rotate(0.15deg); }
+}
+
+
+
+
+#elementList > li {
+    margin-bottom: 5px;
+}
+
+#elementList > li > a:visited {
+    color: blue;
+}
+
+#feedback_div{
+    width: 300px;
+    height: 300px;
+    margin: 10px 10px 10px 10px;
+}
+
+#feedback_div > div{
+    margin: 0px 10px 10px 10px;
+}
+
+
+#input_text_feedback {
+    width: 350px;
+    height: 150px;
+    resize: none;
+    font-size: 14px;
+    margin: 10px 10px 10px 0px;
+}
+
+
+#rag_model_div{
+    width: 500px;
+    margin: 20px 10px 0px 20px;
+}
+
+#rag_generate_model_div{
+    width: 1000px;
+    margin: 20px 10px 0px 20px;
+}
+
+label {
+    font-size: 18px;
+}
+
+select {
+    font-size: 14px;
+}

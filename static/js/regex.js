@@ -78,7 +78,7 @@ function codeText2HTML(text) {
     let hasJson = text.includes("```json");
     let hasSH = text.includes("```sh");
     let hasHTML = text.includes("```html");
-    text = text.replace(/```(?:html|javascript|python|css|c|json|sh|plaintext).*\n/g,'```');
+    text = text.replace(/```(?:html|javascript|python|css|c|json|sh|plaintext|bash).*\n/g,'```');
     // html特殊處理
     if (hasHTML){
         text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
