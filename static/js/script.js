@@ -133,6 +133,7 @@ function addUserMessage(message,now) {
 
 function addBotMessage(message,now) {
     let botMsgID = "botMsg_" + now;
+    const messageElement = document.createElement("div");
     messageElement.classList.add("mb-2", "robot-message-container");
     //正則化處理
     message = regex_flow(message);

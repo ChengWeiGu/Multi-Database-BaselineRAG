@@ -144,7 +144,7 @@ submitButton.addEventListener('click', function() {
         } else { 
             img_controller.abort();
             img_controller = null;
-            removeLastMessage();
+            removeLastMessage(); //bot animation
             addBotMessage("You have canceled the request. How may I assist you next?",now);
         }
         
