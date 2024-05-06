@@ -5,6 +5,9 @@ import tiktoken
 import configparser
 import requests
 from bs4 import BeautifulSoup
+import string
+import random
+import datetime
 
 
 config = configparser.ConfigParser()
@@ -86,7 +89,19 @@ def crawler_website(url = "https://www.weintek.com/globalw/Product/Product_specc
     except Exception as e:
         content_texts = f"[Crawler Error] {str(e)}"
     return content_texts
-    
+
+
+def create_random_serial_number(length=10):
+    serial_number = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f_')
+    for _ in range(length):
+        prob = random.random()
+        if prob < 0.5:
+            serial_number += random.choice(string.ascii_uppercase)
+        else:
+            serial_number += random.choice(string.digits)
+    return serial_number
+
+
 
 if __name__ == "__main__":
     # words = """<br />  Dear sirs,<br />  <br />  We have used MT506TV for 3 years.<br />  Now I&nbsp;am exploring your new model MT6070iH, and I am trying to realize a connection between PC, HMI and PLC. HMI-PLC communication seems    OK, but the only posible connection for HMI project&nbsp;downloading I’m realizing is via&nbsp;USB ports. 
@@ -95,18 +110,21 @@ if __name__ == "__main__":
     #             </span> The HMI will be    mounted on&nbsp;operator’s panel with 5 push buttons on the side of HMI communication ports, so it is impossible to use USB cable for project    downloading.&nbsp;<span style="text-decoration: underline">Could you give me any advise how to wire and program HMI via COM port, as I have done with    MT506TV model?</span><br />  <br />  Best Regards<br />  Stefan Mihaylov"""
     # print(remove_html_tags(words))
     # print(calculate_tokens(documents=[words]))
-    text = """
-            (8) If users ask about product specifications, you can provide them with official websites under the following category:
-            *cMT Series: https://www.weintek.com/globalw/Product/Product_cMT.aspx
-            *cMTX Series: https://www.weintek.com/globalw/Product/Product_cMTX.aspx
-            *Gateway Series: https://www.weintek.com/globalw/Product/Product_Gateway.aspx
-            *IR Series: https://www.weintek.com/globalw/Product/Product_speciR.aspx
-            *IE Series: https://www.weintek.com/globalw/Product/Product_iE.aspx
-            *IP Series: https://www.weintek.com/globalw/Product/Product_iP.aspx
-            *Accessories Series: https://www.weintek.com/globalw/Product/Product_Accessories.aspx
-            (9) None the above, please skip this step and proceed to think the next step
-            """
-    text = """please summarise the website
-            https://support.ihmi.net"""
+    # text = """
+    #         (8) If users ask about product specifications, you can provide them with official websites under the following category:
+    #         *cMT Series: https://www.weintek.com/globalw/Product/Product_cMT.aspx
+    #         *cMTX Series: https://www.weintek.com/globalw/Product/Product_cMTX.aspx
+    #         *Gateway Series: https://www.weintek.com/globalw/Product/Product_Gateway.aspx
+    #         *IR Series: https://www.weintek.com/globalw/Product/Product_speciR.aspx
+    #         *IE Series: https://www.weintek.com/globalw/Product/Product_iE.aspx
+    #         *IP Series: https://www.weintek.com/globalw/Product/Product_iP.aspx
+    #         *Accessories Series: https://www.weintek.com/globalw/Product/Product_Accessories.aspx
+    #         (9) None the above, please skip this step and proceed to think the next step
+    #         """
+    # text = """please summarise the website
+    #         https://support.ihmi.net"""
     
-    print(acquire_web_links(text))
+    # print(acquire_web_links(text))
+    print(create_random_serial_number())
+    
+    

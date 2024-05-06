@@ -10,6 +10,7 @@ import json
 config=configparser.ConfigParser()
 config.read("Config.ini")
 firewall_prompt = config['PROMPT']['firewall_prompt']
+close_issues_prompt=config['PROMPT']['close_issues_prompt']
 
 
 class ZeroShotPlanner:
@@ -37,33 +38,41 @@ class ZeroShotPlanner:
                                        "EasyAccess 2.0 inclues Push Notification (推播通知) and Top-up Card (流量卡)"],
                             'class5':["This question is about Weintek product specifications (規格), questions related to whether it supports memory, processor, I/O interfaces, and other specification-related issues.",
                                       "Weintek product include cMT- series, eMT600- series, eMT3000- series, iRSeries, MT600- series, MT8000- series, MT8000iE- series, MT8000iP- series, MT8000XE- series, mTV- series, G- series"],
-                            'class6':["This question is about a general tasks such as language translation, writting an email (寫作風格、寫Email、寫電子郵件), arranging meetings, simple greetings or format conversion (格式轉換), summary tasks, making (or transforming into) a table (表格整理)",
+                            'class6':["I think we've covered everything for now. Thanks for your help!",
+                                      "That clears things up. Appreciate your assistance!",
+                                      "Looks like we've got it sorted. Thanks again!",
+                                      "I believe we've addressed everything. Thanks for your input!",
+                                      "Seems like we've reached a resolution. Thanks for your guidance!"],
+                            'class7':["This question is about a general tasks such as language translation, writting an email (寫作風格、寫Email、寫電子郵件), arranging meetings, simple greetings or format conversion (格式轉換), summary tasks, making (or transforming into) a table (表格整理)",
                                       "This is a general task about web crawler, summarizing a website (總結網站資訊, 網頁內容, 彙整網頁資訊), web information extraction (網站資訊萃取)",
                                       "This question is about data analysis, excel formula, human history, astronomy, geography, physics, chemistry, math or biology",
                                       "This question is about introduction of Weintek Company"],
-                            'class7':["This question is about personal feelings, love, interpersonal relationships, or friendship issues",
+                            'class8':["This question is about personal feelings, love, interpersonal relationships, or friendship issues",
                                       "This question is about hacking, fighting or greetings",
                                       "This question is a sensitive about confidential information (機密資訊), personal privacy (個人隱私), sex (性話題), violence (暴力), politics (政治) and crime (犯罪)"]
                             }
         self.n_class = len(self.class_dict)
-        self.step_prompt = """Step 1: Determine if the customer provides any attached from his question(one of 'Y' or 'N')
-                                
-                            Step 2: Determine customer's purpose from the new question and chat history (between you and customer). Use following way to do summary:
+        self.step_prompt = """
+                            Step 1: Determine the role of the user who must be one of "End Customer" or "Distributor":
+                                    (1) if the question contains sentences like "Customer has a ..." or "Our client has encountered..." or "In our customer's case...", he is a "Distributor".
+                                    (2) otherwise, he is our "End customer".
+                            
+                            Step 2: Determine user's purpose from the new question and chat history (between you and user). Use following way to do summary:
                                     (1) Rule: You must consider contextual responses to understand the user's intended goal and help them achieve it.
                                     (2) if user wants to know where to download Weinview model, try to give the web link or ask them to contact their supplier for help
-                                    (3) if user wants to know about manipulation and operation method, try to find the answer and reply them with step by step. You can also ask them to contact the distributor/ventor/supplier for inquiries.
+                                    (3) if user wants to know about manipulation and operation method, try to find the answer and reply them with step by step.
                                     (4) if user want to talk with you, you should talk with them carefully. do not talk about sensitive words, such as sex or violence or politics or crime.
                                     (5) If user asks about product specifications, you can provide them with official websites : https://www.weintek.com/globalw/
                                     (6) For User Guide Manual, Weintek Official Download Link is : https://www.weintek.com/globalw/Download/Download.aspx
                                     (7) None the above, please skip this step and proceed to think the next step
                             
-                            Step 3 : Determine the user's product name, use following way to do summary:
-                                    (1) if customer's product belongs to TK-Series HMI like TK6071iQ, please just diplomatically ask them to request their supplier
+                            Step 3: Determine the user's product name, use following way to do summary:
+                                    (1) if user's product belongs to TK-Series HMI like TK6071iQ, please just diplomatically ask them to request their supplier
                                     (2) if user does not provde the information, you can ask them "Can you provide your product name for further assiatance?"
-                                    (3) If the customer is from Italy, advise them to reach out to our Italian distributors for assistance.
+                                    (3) If the end customer is from Italy, advise them to reach out to our Italian distributors for assistance.
                                     (4) None the above, please skip this step and proceed to think the next step
                             
-                            Step 4 : Decompose the customer's question and determine if additional sub-tasks need to be performed. please use the rules below:
+                            Step 4: Decompose the user's question and determine if additional sub-tasks need to be performed. please use the rules below:
                                     (1) general tasks includes language translation, writting an email, arranging meetings, table process, format conversion, ...etc.
                                     (2) general tasks includes wirting python, macro, css, c++ or javascript codes.
                                     (3) If the user requests you to provide a table, please transform your answer into Markdown format as possible.
@@ -71,25 +80,31 @@ class ZeroShotPlanner:
                                         -- "it is a general task , please use web crawler to summarize the following website: <your link>"
                                     (5) None the above, please skip this step and proceed to think the next step
                             
-                            Step 5 : To Determine which references are most relavant to the new customer's question and provide them
+                            Step 5: Determine how the user can seek assistance accroding to <step 1 result>:
+                                    (1) For end customers, you can ask them to contact his distributor for inquiries and helps.
+                                    (2) For distributors, you can ask them to "approach us directly for assistance"
+                            
+                            Step 6: To Determine which references are most relavant to the new question and provide them
                                     (1) Provide the most relevant <source> in retrieved QA or documents where <source> is full filename with pdf, docx or jpg
+                                        If you can find the most relevant chapter or subchapter from the source, please show the chapter and its title with the format :
+                                        <source> & chapter : <the chapter and its title>
                                     (2) Provide the most relevant <web link> mentioned in retrieved QA or documents where <web link> is full http name
                                     (3) Note that your answer should follow the format:
                                         -- document source: determine result of (1) else 'N'
                                         -- Web link: determine result of (2) else 'N'
                                     (4) If there are no useful reference can be found, please skip this step and proceed to think the next step
                             
-                            Step 6 : Write down the answer, advice and summary to the new question in English and use the rules below: 
+                            Step 7: Write down the answer, advice and summary to the new question in English and use the rules below: 
                                     (1) Note that if you can find the answer in the QA paris or retrieved documents, please just show the result and do not mention where it can be found in your summary.
                                     (2) Note that if the answer pertains to operational steps, please provide clear instructions with bullet points.
-                                    (3) Note that do not write down any analysis description of customer's purpose in your summary.
+                                    (3) Note that do not write down any analysis description of user's purpose in your summary.
                                     (4) Note that if the answer cannot be found in the above QA pairs and documents, please says 'I cannot reply. less information. Could you provide more information?' in your summary
                             
                             Output your answers with the following fixing format without any statement of steps:
                             Summary: 
-                            <step 6 result>
+                            <step 7 result in English>
                             Reference:
-                            <step 5 result>
+                            <step 6 result>
                             """
         
     def find_n_closest(self,query_vector, embeddings, n = 1):
@@ -185,7 +200,13 @@ class ZeroShotPlanner:
                                                                                                 model=generate_model):
                             if chunk_content is not None:
                                 yield chunk_content
-                    ####### plan 3: jssdk detected
+                    ####### plan 3: the issue is going to be closed
+                    elif self.db_mask[-3] == 1:
+                        print("This issue is going to be closed")
+                        for word in close_issues_prompt:
+                            yield word
+                            time.sleep(0.01)
+                    ####### plan 4: jssdk detected
                     elif (self.db_mask[2] == 1) and (self.db_mask[-1] == 0):
                         print("this is a jssdk-related task, then do jssdk + doc search")
                         period_doc_js_chroma_1 = time.time()
@@ -210,7 +231,7 @@ class ZeroShotPlanner:
                             doc_text_body += segment_str + f"\nReference Document#{k+1}\n" + f"Source:{result.metadata['url']}\n" + f"JS Class:{result.metadata['class_name']}\n" + f"Class Description:{result.metadata['description']}\n" + f"Document Content:\n{result.page_content}\n" + segment_str + "\n\n"
                         # doc + jssdk prompt
                         prompt=f"""You are an efficient and prfessional assistant, sorting messages for customer service at HMI equipment manufacturer named Weintek.
-                                Now you recieve the new question from a customer/user regarding our products, software or hardware or firmware: "{query}"
+                                Now you recieve the new question from a user regarding our products, software or hardware or firmware: "{query}"
                                 Think logically step by step to assist the customer service representative according to the relevant information/documents retrieved from the database as follows:\n\n{doc_text_body}
                                 """
                         prompt += "\n\n" + self.step_prompt
@@ -222,7 +243,7 @@ class ZeroShotPlanner:
                             if chunk_content is not None:
                                 yield chunk_content
                         print(f"time cost for gpt: {time.time()-period_doc_js_gpt_1}")
-                    ###### plan4: sr + wcdb
+                    ###### plan 5 : sr + wcdb
                     elif (self.db_mask[3] == 1) and (self.db_mask[-1] == 0):
                         print("this is a weincloud-related task, then do sr + wc search")
                         period_sr_wc_chroma_1 = time.time()
@@ -247,7 +268,7 @@ class ZeroShotPlanner:
                             doc_text_body += segment_str + f"\nReference Document#{k+1}\n" + f"Source:{result.metadata['url']}\n" + f"Class:{result.metadata['class_name']}\n" + f"Class Description:{result.metadata['description']}\n" + f"Document Content:\n{result.page_content}\n" + segment_str + "\n\n"
                         # sr + doc prompts
                         prompt=f"""You are an efficient and prfessional assistant, sorting messages for customer service at HMI equipment manufacturer named Weintek.
-                                Now you recieve the new question from a customer/user regarding our products, software or hardware or firmware: "{query}"
+                                Now you recieve the new question from a user regarding our products, software or hardware or firmware: "{query}"
                                 Think logically step by step to assist the customer service representative according to the following historical QA-pair information:\n\n{qa_text_body}
                                 To make your answer more precise, you can also refer to the relevant information retrieved from the database as follows:\n\n{doc_text_body}
                                 """
@@ -260,7 +281,7 @@ class ZeroShotPlanner:
                             if chunk_content is not None:
                                 yield chunk_content
                         print(f"time cost for chat openai {time.time()-period_sr_wc_gpt_1}")
-                    ###### plan5: sr + specdb
+                    ###### plan 6: sr + specdb
                     elif (self.db_mask[4] == 1) and (self.db_mask[-1] == 0):
                         print("this is a product spec related task, then do sr + spec search")
                         period_sr_spec_chroma_1 = time.time()
@@ -283,7 +304,7 @@ class ZeroShotPlanner:
                             doc_text_body += segment_str + f"\nReference Document#{k+1}\n" + f"Source:{result.metadata['source']}\n" + f"Document Content:\n{result.page_content}\n" + segment_str + "\n\n"
                         # sr + doc prompts
                         prompt=f"""You are an efficient and prfessional assistant, sorting messages for customer service at HMI equipment manufacturer named Weintek.
-                                Now you recieve the new question from a customer/user regarding our products, software or hardware or firmware: "{query}"
+                                Now you recieve the new question from a user regarding our products, software or hardware or firmware: "{query}"
                                 Think logically step by step to assist the customer service representative according to the following historical QA-pair information:\n\n{qa_text_body}
                                 To make your answer more precise, you can also refer to the relevant information retrieved from the database as follows:\n\n{doc_text_body}
                                 """
@@ -296,7 +317,7 @@ class ZeroShotPlanner:
                             if chunk_content is not None:
                                 yield chunk_content
                         print(f"time cost for chat: {time.time()-period_sr_spec_gpt_1}")
-                    # plan6 : others   
+                    # plan 7 : others   
                     else:
                         print("this is a no class task, then do sr + doc search")
                         period_sr_doc_chroma_1 = time.time()
@@ -321,7 +342,7 @@ class ZeroShotPlanner:
                             doc_text_body += segment_str + f"\nReference Document#{j+1}\n" + f"Source:{result.metadata['source']}\n" + f"Document Content:\n{result.page_content}\n" + segment_str + "\n\n"
                         # sr + doc prompts
                         prompt=f"""You are an efficient and prfessional assistant, sorting messages for customer service at HMI equipment manufacturer named Weintek.
-                                Now you recieve the new question from a customer/user regarding our products, software or hardware or firmware: "{query}"
+                                Now you recieve the new question from a user regarding our products, software or hardware or firmware: "{query}"
                                 Think logically step by step to assist the customer service representative according to the following historical QA-pair information:\n\n{qa_text_body}
                                 To make your answer more precise, you can also refer to the relevant information retrieved from the database as follows:\n\n{doc_text_body}
                                 """

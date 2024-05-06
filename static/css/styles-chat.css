@@ -150,10 +150,12 @@ body {
 }
 
 
-
-#rag_generate_model_div, #mode_container{
-    width: 1000px;
-    margin: 20px 10px 0px 20px;
+#mode_container {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    width: 500px;
+    margin: 20px auto 0px;
 }
 
 #select_mode {
@@ -191,9 +193,6 @@ select {
 #chat_container {
     width: var(--var_w);
     height: var(--var_h);
-    justify-content: space-between;
-    /* justify-content: center; */
-    align-items: center;
     margin: 20px 10px 0px 20px;
 }
 
@@ -213,17 +212,21 @@ select {
 }
 
 #feedback_container .form_content{
-    margin: 30px 10px 20px 20px;
-    width: 500px;
-    /* display: flex;
-    flex-direction: column; */
+    margin: 25px 10px 20px 20px;
+    width: 400px;
 }
 
-#chat_feedback_container {
+.chat_feedback_container_left {
     display: flex;
     align-items: flex-start;
-    /* padding: 20px; */
-    margin: 0px 0px 20px 0px;
+    margin: 0px 0px 20px 20px;
+}
+
+.chat_feedback_container_center {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    margin: 0px 0px 20px 20px;
 }
 
 .btn_disabled {

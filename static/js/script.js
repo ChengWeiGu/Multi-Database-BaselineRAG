@@ -59,7 +59,10 @@ sendButton.addEventListener('click', function() {
     .then(data => {
         if (data.status == 'success'){
             alert("Send Successifully");
+            // disable feedback form
             feedback_container.style.display = "none";
+            // reset chat box
+            resetChatBoxLayout();
         } else {
             alert(data.error_reason);
         }   
@@ -78,6 +81,7 @@ userInput.addEventListener('keydown',function(event){
 
 //clear all chat content
 clearChatButton.addEventListener('click', function() {
+    // reset the chatbox content
     chatbox.innerHTML = `<div class="mb-2 robot-message-container">
                             <p>
                                 <div class="icon">
@@ -88,6 +92,8 @@ clearChatButton.addEventListener('click', function() {
                                 </div>
                             </p>
                         </div>`;
+    // disable feedback form
+    feedback_container.style.display = "none";
     saveChatItem();
 });
 
@@ -293,6 +299,7 @@ function init_software_settings() {
         console.error('Error:', error);
     })
 }
+
 
 
 

@@ -256,8 +256,6 @@ function copyRobotText(element) {
 
 
 function showFeedbackPopup(element){
-    // set this container to be none
-    feedback_container.style.display = "none";
     // animation shows popup successifully
     var feedbackIcon = document.getElementById(element.id.replace("feedbackBtn_", "feedbackBtnIcon_"));
     // change the icon
@@ -289,11 +287,18 @@ function showFeedbackPopup(element){
     feedback_generation = PreventHtml2Code(feedback_generation);
     var show_selected_label = document.getElementById("show_selected_label_id");
     show_selected_label.textContent = "Response ID : "+element.id.split("_")[1];
+    // re-arrange the layout of chat_feedback_container
+    leftChatBoxLayout();
+    // set this container to be none
+    feedback_container.style.display = "none";
 }
 
 // 關閉feedback視窗
 closeFeedbackFormButton.addEventListener('click', function() {
+    // disable feedback form
     feedback_container.style.display = "none";
+    // reset chatbox layout
+    resetChatBoxLayout();
 })
 
 // chatbox滾輪事件
@@ -345,6 +350,20 @@ function reGenText(element) {
     submitButton.click();
 }
 
+
+// reset chat box layout to center
+function resetChatBoxLayout() {
+    var chat_feedback_container = document.getElementById("chat_feedback_container");
+    chat_feedback_container.classList.remove("chat_feedback_container_left");
+    chat_feedback_container.classList.add("chat_feedback_container_center");
+}
+
+// left chat box layout
+function leftChatBoxLayout() {
+    var chat_feedback_container = document.getElementById("chat_feedback_container");
+    chat_feedback_container.classList.remove("chat_feedback_container_center");
+    chat_feedback_container.classList.add("chat_feedback_container_left");
+}
 
 
 function isValidJSON(str) {

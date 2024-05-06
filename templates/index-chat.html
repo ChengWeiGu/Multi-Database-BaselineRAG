@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icon/web_icon.png')}}">
     <title>SR Copilot Demo</title>
     <!-- 引入 CSS 文件 -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles-chat.css') }}">
@@ -18,7 +19,7 @@
             <div id="version_div" class="version"></div>
         </div>
     </div>
-    
+
     <div id="mode_container">
         <label for="select_mode">Select Interaction Model: </label>
         <select id="select_mode">
@@ -27,8 +28,8 @@
         </select>
     </div>
 
-    <div id="chat_feedback_container">
-        <div id="chat_container" class="bg-white shadow-md rounded-lg w-full">
+    <div id="chat_feedback_container" class="chat_feedback_container_center">
+        <div id="chat_container" class="bg-white shadow-md rounded-lg w-full">        
             <div class="p-3 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
                 <p class="text-md font-semibold">Chat Box</p>
             </div>
@@ -90,9 +91,9 @@
                 </select>
             </div>
             <div class="form_content">
-                <label for="input_text_srcRef">(4) Source of information:</label>
+                <label for="input_text_srcRef">(4) Source of information (optional) : </label>
                 <textarea id="input_text_srcRef" class="rounded-lg border-b" name="input_text_srcRef" placeholder = "請提供資料來源或網址 Please provide the information source"></textarea>
-                <label for="fileInput">(5) Upload your file : </label>
+                <label for="fileInput">(5) Upload your file (optional) : </label>
                 <input type="file" id="fileInput" accept=".pdf,.png,.docx,.jpeg,.jpg,.ppt,.doc,.xlsx,.xls,.html">
             </div>
             <div class="form_content">
