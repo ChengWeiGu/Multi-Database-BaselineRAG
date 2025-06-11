@@ -45,4 +45,10 @@ Here is a simple script to implement RAG with Azure OpenAI Resource
 ● nginx -s stop	  //fast shutdown   
 ● nginx -s quit	  //graceful shutdown   
 ● nginx -s reload	   //changing configuration, starting new worker processes with a new configuration, graceful shutdown of old worker processes   
-● nginx -s reopen	   //re-opening log files  
+● nginx -s reopen	   //re-opening log files   
+
+其它快入執行方式:   
+● taskkill /F /IM nginx.exe   //以管理員身分執行cmd, 刪除舊的 nginx task   
+● .\logs\nginx.pid  //進入log刪除 pid檔   
+● .\nginx.exe   //切到 Nginx 主資料夾後執行   
+
